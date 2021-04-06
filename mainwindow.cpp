@@ -15,13 +15,12 @@ MainWindow::MainWindow(QWidget *parent)
     edit = ui->textEdit;
     pb2 = ui->pushButton_2;
     pb3 = ui->pushButton_3;
-    ledit =  ui->lineEdit;
-    ui->label->setText("WELCOME!!");
+    ledit = ui->lineEdit;
 
-    bar = ui->progressBar;
-    bar->setFormat("");
-    bar->setRange(0,100);
-    bar->setValue(0);
+
+    ui->label->setText("WELCOME!!");
+    ui->label_2->setText("Hi! It's my GUI for JetBrain Intership, this text line for searching");
+    ui->label_3->setText("in dictionary works dynamically when editing text, but i add and button for it)");
 
     connect(ledit, &QLineEdit::textChanged, this, &MainWindow::run);
     connect(ledit, &QLineEdit::textChanged, this, &MainWindow::FindProcess);
@@ -47,21 +46,17 @@ void MainWindow::on_pushButton_clicked()
 void MainWindow::stopWork(){
     if(ui->label->text() != "DONE!!")
         ui->label->setText("STOP!");
-    ui->progressBar->setValue(50);
     process = false;
 }
 
 void MainWindow::run(){
     process = true;
-    bar->setFormat("Loading");
-    ui->label->setText("");
+    ui->label->setText("WAIT, PLEASE!)");
 }
 
 void MainWindow::stop(){
     if(ui->label->text() != "STOP!")
         ui->label->setText("DONE!!");
-    ui->progressBar->setFormat("");
-    ui->progressBar->setValue(100);
     process = false;
 }
 
