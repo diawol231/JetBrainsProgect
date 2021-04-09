@@ -27,22 +27,14 @@ bool KMP::kmpCompare(QString searchedStr, QString subStr){
     prefix_function(buff_str, pi);
 
     int t_len = subStr.length();
-    bool proverka = false;
 
     for (int i = 0; i < searchedStr.length(); i++) {
         if (pi[t_len + 1 + i] == t_len) {
-            proverka = true;
-            break;
+            return true;
         }
 
     }
 
-    if(proverka){
-        return true;
-    }
-    else{
-        return false;
-    }
-
+    return false;
 
 }
