@@ -1,7 +1,7 @@
 #include "KMP.h"
 
 
-void prefix_function(const QString &buff_str, QVector<int> &pi){
+void prefixFunction(const QString &buff_str, QVector<int> &pi){ //алгоритм Кнута-Морриса-Прата
     for (int i = 1; i < buff_str.length(); i++) {
             int j = pi[i - 1];
 
@@ -20,11 +20,13 @@ void prefix_function(const QString &buff_str, QVector<int> &pi){
 }
 
 bool KMP::kmpCompare(QString searchedStr, QString subStr){
-    searchedStr.toLower();
-    subStr.toLower();
+    searchedStr = searchedStr.toLower(); //для более точного сравнения, чтобы нам не мешали
+    subStr = subStr.toLower();
+
     QString buff_str = subStr+"#"+searchedStr;
-    QVector<int> pi(buff_str.length(), 0);
-    prefix_function(buff_str, pi);
+    QVector<int> pi(buff_str.length(), 0); //выделение памяти
+
+    prefixFunction(buff_str, pi);
 
     int t_len = subStr.length();
 
@@ -34,7 +36,6 @@ bool KMP::kmpCompare(QString searchedStr, QString subStr){
         }
 
     }
-
     return false;
 
 }

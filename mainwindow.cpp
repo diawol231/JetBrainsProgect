@@ -4,15 +4,16 @@
 #include <QFileDialog>
 #include "KMP.h"
 #include <qt_windows.h>
+#include <QTextCursor>
 
-QString file_name = "words.txt";
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    edit = ui->textEdit;
+
+    edit = ui->textEdit;       //указатели на наши объекты на экране
     pb2 = ui->pushButton_2;
     pb3 = ui->pushButton_3;
     ledit = ui->lineEdit;
@@ -22,15 +23,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->label_2->setText("Hi! It's my GUI for JetBrain Intership, this text line for searching");
     ui->label_3->setText("in dictionary works dynamically when editing text, but i add and button for it)");
 
-    connect(ledit, &QLineEdit::textChanged, this, &MainWindow::run);
+    connect(ledit, &QLineEdit::textChanged, this, &MainWindow::run);                //запуск последовательных процессов после изменения текста в строке lineEdit
     connect(ledit, &QLineEdit::textChanged, this, &MainWindow::FindProcess);
     connect(ledit, &QLineEdit::textChanged, this, &MainWindow::stop);
 
-    connect(pb2, &QPushButton::clicked, this, &MainWindow::run);
+    connect(pb2, &QPushButton::clicked, this, &MainWindow::run);                    //запуск последовательных процессов после нажатия кнопки
     connect(pb2, &QPushButton::clicked, this, &MainWindow::FindProcess);
     connect(pb2, &QPushButton::clicked, this, &MainWindow::stop);
 
-    connect(pb3,  &QPushButton::clicked, this,&MainWindow::stopWork);
+    connect(pb3,  &QPushButton::clicked, this,&MainWindow::stopWork);               //принудительная остановка процесса вывода на экран textEdit
 }
 
 MainWindow::~MainWindow()
@@ -38,66 +39,66 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButton_clicked() //выход из программы
 {
     ExitProcess(244);
 }
 
-void MainWindow::stopWork(){
+void MainWindow::stopWork(){    //уведомляет о остановке процесса и его завешении
     if(ui->label->text() != "DONE!!")
         ui->label->setText("STOP!");
     process = false;
 }
 
-void MainWindow::run(){
+void MainWindow::run(){       //уведомляет, что процесс уже запущен
     process = true;
     ui->label->setText("WAIT, PLEASE!)");
 }
 
-void MainWindow::stop(){
+void MainWindow::stop(){        //уведомляет, что процесс  завершился
     if(ui->label->text() != "STOP!")
         ui->label->setText("DONE!!");
     process = false;
 }
 
 void MainWindow::FindProcess(){
+        QString file_name = "words.txt";
         QString arg1 = ui->lineEdit->text();
         QString buff_word, buff_arg;
-        KMP kmp;
-        QString proc = "Processing";
+        KMP kmp;  //создаем объект класса
 
-        ui->textEdit->clear();
+        ui->textEdit->clear();   //очистка поля для поиска
 
-        QFile file(file_name);
+        QFile file(file_name);  //объект файла
 
-        if(!file.open(QIODevice::ReadOnly)){
+        if(!file.open(QIODevice::ReadOnly)){     //проверка на открытие
             QMessageBox::warning(this, "warning!", "File not open");
             return;
         }
 
-        QTextStream in(&file);
+        QTextStream in(&file);    //для считывания слов из файла
 
         while(!in.atEnd()){
-            if(!process){
+
+            if(!process){         //для прерывания недоисполняемых сигналов, если их прервали новым процессом.
                 process = true;
                 return;
             }
 
             QString word;
-            in>>word;
-            buff_word = word.toLower();
-            buff_arg = arg1.toLower();
+            in>>word;            //берем слово из строки
 
-            bool succsess = kmp.kmpCompare(buff_word, buff_arg);
+            bool succsess = kmp.kmpCompare(word, arg1); //идем сравнивать с помощью алгоритма КМП
 
-            if (succsess){
+            if (succsess){                  //если удачно, выводим слово
                 ui->textEdit->append(word);
             }
             qApp->processEvents();
         }
-
         file.close();
 
-        if(ui->textEdit->toPlainText().isEmpty())
+        ui->textEdit->moveCursor(QTextCursor::Start);  //переводим каретку в исходное положение
+
+        if(ui->textEdit->toPlainText().isEmpty())      //если наше поле textEdit так и осталось пустым
             ui->textEdit->setText("Nothing found =(");
 }
